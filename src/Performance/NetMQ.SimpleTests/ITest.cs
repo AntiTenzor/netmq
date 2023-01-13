@@ -2,7 +2,7 @@
 {
     internal interface ITest
     {
-        string? TestName { get; }
+        string TestName { get; }
 
         void RunTest();
     }

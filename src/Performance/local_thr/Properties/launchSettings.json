@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "local_thr": {
+      "commandName": "Project",
+      "commandLineArgs": "tcp://127.0.0.1:6789 1024 1000000"
+    }
+  }
+}

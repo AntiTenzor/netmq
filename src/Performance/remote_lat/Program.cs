@@ -45,12 +45,12 @@ namespace remote_lat
 
                 msg.Close();
 
-                double elapsedMicroseconds = stopWatch.ElapsedTicks*1000000L/Stopwatch.Frequency;
-                double latency = elapsedMicroseconds/(roundtripCount*2);
+                double elapsedSeconds = stopWatch.Elapsed.TotalSeconds;
+                double latency = elapsedSeconds / (roundtripCount*2);
 
-                Console.WriteLine("message size: {0} [B]", messageSize);
+                Console.WriteLine("message size: {0} [Bytes]", messageSize);
                 Console.WriteLine("roundtrip count: {0}", roundtripCount);
-                Console.WriteLine("average latency: {0:0.000} [µs]", latency);
+                Console.WriteLine("average latency: {0:0.000} [µs]", latency * 1e6);
             }
 
             return 0;

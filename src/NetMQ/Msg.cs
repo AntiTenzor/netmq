@@ -252,7 +252,7 @@ namespace NetMQ
         /// <see cref="NetMQ.MsgType.Empty"/> or <see cref="NetMQ.MsgType.Delimiter"/>.
         /// </remarks>
         [Obsolete("Use implicit casting to Span or Slice instead")]
-        public byte[]? Data => m_data;
+        public byte[] Data => m_data;
         
         /// <summary>
         /// Return the internal buffer as Span

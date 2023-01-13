@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+
 using NetMQ;
 using NetMQ.Sockets;
 
@@ -15,6 +16,10 @@ namespace local_thr
                 return 1;
             }
 
+            Console.WriteLine("Args:   {0}", String.Join("   ", args));
+
+
+
             string bindTo = args[0];
             int messageSize = int.Parse(args[1]);
             int messageCount = int.Parse(args[2]);
@@ -29,8 +34,11 @@ namespace local_thr
                 pullSocket.Receive(ref msg);
 
                 var stopWatch = Stopwatch.StartNew();
-                for (int i = 0; i != messageCount - 1; i++)
+                for (int i = 0; i < messageCount - 2; i++)
                 {
+                    if ((i > messageCount - 1100) && (i % 1 == 0))
+                        Console.WriteLine("    Receiving message number i: {0:# ### ##0}", i);
+
                     pullSocket.Receive(ref msg);
                     if (msg.Size != messageSize)
                     {
@@ -39,19 +47,20 @@ namespace local_thr
                     }
                 }
                 stopWatch.Stop();
-                var millisecondsElapsed = stopWatch.ElapsedMilliseconds;
-                if (millisecondsElapsed == 0)
-                    millisecondsElapsed = 1;
+
+                double secondsElapsed = stopWatch.Elapsed.TotalSeconds;
+                //if (millisecondsElapsed == 0)
+                //    millisecondsElapsed = 1;
 
                 msg.Close();
 
-                double messagesPerSecond = (double)messageCount/millisecondsElapsed*1000;
-                double megabits = messagesPerSecond*messageSize*8/1000000;
+                double messagesPerSecond = (double)messageCount / secondsElapsed;
+                double megaBYTES = messagesPerSecond * messageSize /* *8 */ / 1024.0 / 1024.0;
 
-                Console.WriteLine("message size: {0} [B]", messageSize);
+                Console.WriteLine("message size: {0} [Bytes]", messageSize);
                 Console.WriteLine("message count: {0}", messageCount);
                 Console.WriteLine("mean throughput: {0:0.000} [msg/s]", messagesPerSecond);
-                Console.WriteLine("mean throughput: {0:0.000} [Mb/s]", megabits);
+                Console.WriteLine("mean throughput: {0:0.000} [MegaBYTES/s]", megaBYTES);
             }
 
             return 0;

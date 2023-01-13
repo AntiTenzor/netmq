@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace NetMQ.SimpleTests
 {
@@ -25,6 +26,8 @@ namespace NetMQ.SimpleTests
                 Console.WriteLine();
                 test.RunTest();
                 Console.WriteLine();
+
+                Thread.Sleep(1000);
             }
 
             Console.WriteLine();

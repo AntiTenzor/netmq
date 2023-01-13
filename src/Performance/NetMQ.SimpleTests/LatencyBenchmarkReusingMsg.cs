@@ -6,23 +6,24 @@ using NetMQ.Sockets;
 
 namespace NetMQ.SimpleTests
 {
-    internal class LatencyBenchmark : LatencyBenchmarkBase
+    internal class LatencyBenchmarkReusingMsg : LatencyBenchmarkBase
     {
-        public LatencyBenchmark()
+        public LatencyBenchmarkReusingMsg()
         {
-            TestName = "Req/Rep Latency Benchmark";
+            TestName = "Req/Rep Latency Benchmark (reusing Msg)";
         }
 
         protected override long DoClient(NetMQSocket socket, int messageSize)
         {
-            var msg = new byte[messageSize];
-
+            var msg = new Msg();
             var watch = Stopwatch.StartNew();
 
             for (int i = 0; i < Iterations; i++)
             {
-                socket.SendFrame(msg);
-                socket.SkipFrame(); // ignore response
+                msg.InitGC(new byte[messageSize], messageSize);
+                socket.Send(ref msg, more: false);
+                socket.Receive(ref msg);
+                msg.Close();
             }
 
             return watch.ElapsedTicks;
@@ -30,10 +31,14 @@ namespace NetMQ.SimpleTests
 
         protected override void DoServer(NetMQSocket socket, int messageSize)
         {
+            var msg = new Msg();
+            msg.InitEmpty();
+
             for (int i = 0; i < Iterations; i++)
             {
-                byte[] message = socket.ReceiveFrameBytes();
-                socket.SendFrame(message);
+                socket.Receive(ref msg);
+
+                socket.Send(ref msg, more: false);
             }
         }
 

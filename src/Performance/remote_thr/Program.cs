@@ -14,6 +14,8 @@ namespace remote_thr
                 return 1;
             }
 
+            Console.WriteLine("Args:   {0}", String.Join("   ", args));
+
             string connectTo = args[0];
             int messageSize = int.Parse(args[1]);
             int messageCount = int.Parse(args[2]);
